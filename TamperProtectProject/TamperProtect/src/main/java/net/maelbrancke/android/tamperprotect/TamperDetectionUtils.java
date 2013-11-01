@@ -8,6 +8,9 @@ import android.content.pm.Signature;
 import android.os.Build;
 
 import java.io.ByteArrayInputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
@@ -19,8 +22,6 @@ import javax.security.auth.x500.X500Principal;
  * Tamper detection utilities.
  */
 public class TamperDetectionUtils {
-
-
 
     /**
      * Check whether the app is currently running in the emulator.
@@ -83,13 +84,10 @@ public class TamperDetectionUtils {
         boolean debuggable = false;
 
         try {
-            PackageInfo packageInfo = context.getPackageManager().getPackageInfo( getPackageName(context), PackageManager.GET_SIGNATURES );
-            Signature[] signatures = packageInfo.signatures;
+            Signature[] signatures = getSignatures(context);
 
-            CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
             for (int i = 0; i < signatures.length; i++) {
-                ByteArrayInputStream inputStream = new ByteArrayInputStream(signatures[i].toByteArray());
-                X509Certificate certificate = (X509Certificate) certificateFactory.generateCertificate(inputStream);
+                X509Certificate certificate = generateX509CertificateFromSignature(signatures[i]);
                 debuggable = certificate.getSubjectX500Principal().equals(DEBUG_CERTIFICATE_DN);
                 if (debuggable) {
                     break;
@@ -104,6 +102,34 @@ public class TamperDetectionUtils {
     }
 
     /**
+     * Check whether the signing key can be validated.
+     *
+     * @param context Context
+     * @param certificateToCheckAgainst the SHA1 of the signing certificate
+     * @return true when the signing key appears valid, otherwise false
+     */
+    public static boolean isValidSigningKey(final Context context, final String certificateToCheckAgainst) {
+        boolean valid = true;
+        try {
+            Signature[] signatures = getSignatures(context);
+            for (int i = 0; i < signatures.length; i++) {
+                X509Certificate certificate = generateX509CertificateFromSignature(signatures[i]);
+                String sha1 = getCertificateSHA1(certificate);
+                if (!certificateToCheckAgainst.equalsIgnoreCase(sha1)) {
+                    valid = false;
+                }
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            // package not found - leave valid true
+        } catch (CertificateException e) {
+            // certificate factory non-instantiable - leave valid true
+        } catch (NoSuchAlgorithmException e) {
+            // algorithm not found - leave valid true
+        }
+        return valid;
+    }
+
+    /**
      * Get the application package name.
      *
      * @param context Context
@@ -111,6 +137,39 @@ public class TamperDetectionUtils {
      */
     public static String getPackageName(final Context context) {
         return context.getPackageName();
+    }
+
+    private static String getCertificateSHA1(X509Certificate certificate) throws NoSuchAlgorithmException, CertificateEncodingException {
+        MessageDigest messageDigest = MessageDigest.getInstance("SHA-1");
+        byte[] der = certificate.getEncoded();
+        messageDigest.update(der);
+        byte[] digest = messageDigest.digest();
+        return hexify(digest);
+    }
+
+    private static Signature[] getSignatures(final Context context) throws PackageManager.NameNotFoundException {
+        PackageInfo packageInfo = context.getPackageManager().getPackageInfo( getPackageName(context), PackageManager.GET_SIGNATURES );
+        Signature[] signatures = packageInfo.signatures;
+        return signatures;
+    }
+
+    private static X509Certificate generateX509CertificateFromSignature(final Signature signature) throws CertificateException {
+        CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(signature.toByteArray());
+        X509Certificate certificate = (X509Certificate) certificateFactory.generateCertificate(inputStream);
+        return certificate;
+    }
+
+    private static String hexify (byte bytes[]) {
+        char[] hexDigits = {'0', '1', '2', '3', '4', '5', '6', '7',
+                '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+
+        StringBuffer buf = new StringBuffer(bytes.length * 2);
+        for (int i = 0; i < bytes.length; ++i) {
+            buf.append(hexDigits[(bytes[i] & 0xf0) >> 4]);
+            buf.append(hexDigits[bytes[i] & 0x0f]);
+        }
+        return buf.toString();
     }
 
 }
