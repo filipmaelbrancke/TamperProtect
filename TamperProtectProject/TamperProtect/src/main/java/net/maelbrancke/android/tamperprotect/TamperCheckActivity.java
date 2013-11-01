@@ -27,6 +27,8 @@ public class TamperCheckActivity extends Activity {
                     .commit();
         }
 
+        boolean playstore = TamperDetectionUtils.isInstalledThroughPlayStore(getApplicationContext());
+        boolean debuggable = TamperDetectionUtils.isDebuggable(getApplicationContext(), true);
     }
 
 
