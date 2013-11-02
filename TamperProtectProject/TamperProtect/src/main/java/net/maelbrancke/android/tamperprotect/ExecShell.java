@@ -51,6 +51,7 @@ public class ExecShell {
                 }
             }
         }
+        process.destroy();
 
         return fullResponse;
     }

@@ -15,12 +15,19 @@ public class RootDetectionUtils {
      * @return true when the app seems to run on a rooted device, otherwise false
      */
     public static boolean isRooted() {
+        return isRooted(false);
+    }
+
+    public static boolean isRooted(final boolean extendedChecks) {
         if (isRootedSigningKeys()) {
             return true;
-        } else if (isRootedSuperuserBinary()) {
+        } else if (isRootedBinariesPresent()) {
             return true;
-        } else if (isRootedRunCommand()) {
-            return true;
+        }
+        if (extendedChecks == true) {
+            if (isRootedRunCommand()) {
+                return true;
+            }
         }
         return false;
     }
@@ -60,11 +67,31 @@ public class RootDetectionUtils {
     /**
      * Try to determine whether running on a rooted device by checking for the existence for
      * binaries.
+     * su, busybox
      *
      * @return true when the app seems to run on a rooted device, otherwise false
      */
-    public static boolean isRootedSuperuserBinary() {
-        return fileExists("/system/app/Superuser.apk");
+    public static boolean isRootedBinariesPresent() {
+        String[] places = {"/sbin/", "/system/bin/", "/system/xbin/", "/data/local/xbin/",
+                "/data/local/bin/", "/system/sd/xbin/", "/system/bin/failsafe/", "/data/local/",
+                "/system/app/"};
+        String[] binaries = {"Superuser", "su", "busybox"};
+        //return fileExists("/system/app/Superuser.apk");
+        for (String binary : binaries) {
+            if (binaryExists(places, binary)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean binaryExists(final String[] paths, final String binary) {
+        for (String path : paths) {
+            if (fileExists(path + binary)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static boolean fileExists(final String filePath) {
