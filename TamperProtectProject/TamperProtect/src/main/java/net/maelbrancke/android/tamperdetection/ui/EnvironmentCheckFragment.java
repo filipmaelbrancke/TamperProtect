@@ -1,4 +1,4 @@
-package net.maelbrancke.android.tamperprotect.ui;
+package net.maelbrancke.android.tamperdetection.ui;
 
 import android.app.Fragment;
 import android.content.Context;
@@ -9,9 +9,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 
-import net.maelbrancke.android.tamperprotect.R;
-import net.maelbrancke.android.tamperprotect.task.EnvironmentChecker;
-import net.maelbrancke.android.tamperprotect.util.TamperDetectionUtils;
+import net.maelbrancke.android.tamperdetection.R;
+import net.maelbrancke.android.tamperdetection.task.EnvironmentChecker;
+import net.maelbrancke.android.tamperdetection.util.TamperDetectionUtils;
 
 /**
  * Fragment for environment checks.

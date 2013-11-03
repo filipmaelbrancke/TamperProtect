@@ -1,4 +1,4 @@
-package net.maelbrancke.android.tamperprotect.util;
+package net.maelbrancke.android.tamperdetection.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;

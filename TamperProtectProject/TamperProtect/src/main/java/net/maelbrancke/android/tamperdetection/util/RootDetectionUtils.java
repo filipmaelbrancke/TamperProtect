@@ -1,4 +1,4 @@
-package net.maelbrancke.android.tamperprotect.util;
+package net.maelbrancke.android.tamperdetection.util;
 
 import android.os.Build;
 

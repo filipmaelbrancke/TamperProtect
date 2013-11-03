@@ -1,7 +1,6 @@
-package net.maelbrancke.android.tamperprotect.ui;
+package net.maelbrancke.android.tamperdetection.ui;
 
 import android.app.Fragment;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,9 +8,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 
-import net.maelbrancke.android.tamperprotect.R;
-import net.maelbrancke.android.tamperprotect.task.RootDetector;
-import net.maelbrancke.android.tamperprotect.util.RootDetectionUtils;
+import net.maelbrancke.android.tamperdetection.R;
+import net.maelbrancke.android.tamperdetection.task.RootDetector;
+import net.maelbrancke.android.tamperdetection.util.RootDetectionUtils;
 
 
 /**

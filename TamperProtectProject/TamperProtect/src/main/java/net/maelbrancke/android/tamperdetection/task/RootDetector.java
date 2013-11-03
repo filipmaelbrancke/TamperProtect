@@ -1,8 +1,8 @@
-package net.maelbrancke.android.tamperprotect.task;
+package net.maelbrancke.android.tamperdetection.task;
 
 import android.os.AsyncTask;
 
-import net.maelbrancke.android.tamperprotect.ui.RootCheckFragment;
+import net.maelbrancke.android.tamperdetection.ui.RootCheckFragment;
 
 /**
  * Root detector AsyncTask.

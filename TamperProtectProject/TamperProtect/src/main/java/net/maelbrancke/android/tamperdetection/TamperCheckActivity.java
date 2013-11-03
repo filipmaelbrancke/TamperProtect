@@ -1,4 +1,4 @@
-package net.maelbrancke.android.tamperprotect;
+package net.maelbrancke.android.tamperdetection;
 
 import android.app.ActionBar;
 import android.app.Activity;
@@ -11,8 +11,8 @@ import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import net.maelbrancke.android.tamperprotect.ui.EnvironmentCheckFragment;
-import net.maelbrancke.android.tamperprotect.ui.RootCheckFragment;
+import net.maelbrancke.android.tamperdetection.ui.EnvironmentCheckFragment;
+import net.maelbrancke.android.tamperdetection.ui.RootCheckFragment;
 
 import java.util.Locale;
 

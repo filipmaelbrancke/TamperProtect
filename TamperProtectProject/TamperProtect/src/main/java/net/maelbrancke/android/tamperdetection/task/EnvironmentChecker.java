@@ -1,9 +1,9 @@
-package net.maelbrancke.android.tamperprotect.task;
+package net.maelbrancke.android.tamperdetection.task;
 
 import android.content.Context;
 import android.os.AsyncTask;
 
-import net.maelbrancke.android.tamperprotect.ui.EnvironmentCheckFragment;
+import net.maelbrancke.android.tamperdetection.ui.EnvironmentCheckFragment;
 
 /**
  * Environment-checking AsyncTask.
