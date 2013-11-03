@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import net.maelbrancke.android.tamperprotect.ui.EnvironmentCheckFragment;
+import net.maelbrancke.android.tamperprotect.ui.RootCheckFragment;
 
 import java.util.Locale;
 
@@ -109,7 +110,11 @@ public class TamperCheckActivity extends Activity implements ActionBar.TabListen
 
         @Override
         public Fragment getItem(int position) {
-            return new EnvironmentCheckFragment();
+            if (position == 1) {
+                return new RootCheckFragment();
+            } else {
+                return new EnvironmentCheckFragment();
+            }
         }
 
         @Override

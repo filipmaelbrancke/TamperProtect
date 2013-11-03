@@ -1,4 +1,4 @@
-package net.maelbrancke.android.tamperprotect.environment;
+package net.maelbrancke.android.tamperprotect.task;
 
 import android.content.Context;
 import android.os.AsyncTask;

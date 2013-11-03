@@ -10,7 +10,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 
 import net.maelbrancke.android.tamperprotect.R;
-import net.maelbrancke.android.tamperprotect.environment.EnvironmentChecker;
+import net.maelbrancke.android.tamperprotect.task.EnvironmentChecker;
 import net.maelbrancke.android.tamperprotect.util.TamperDetectionUtils;
 
 /**
@@ -50,29 +50,23 @@ public class EnvironmentCheckFragment extends Fragment {
     }
 
     private void setPlaystoreCheckResult(final Boolean playstoreInstalled) {
-        mPlaystoreCheckBox.setEnabled(true);
-        if (playstoreInstalled == true) {
-            mPlaystoreCheckBox.setChecked(true);
-        } else {
-            mPlaystoreCheckBox.setChecked(false);
-        }
+        setCheckResult(playstoreInstalled, mPlaystoreCheckBox);
     }
 
     private void setDebuggableCheckResult(final Boolean debuggable) {
-        mDebuggableCheckBox.setEnabled(true);
-        if (debuggable == true) {
-            mDebuggableCheckBox.setChecked(true);
-        } else {
-            mDebuggableCheckBox.setChecked(false);
-        }
+        setCheckResult(debuggable, mDebuggableCheckBox);
     }
 
     private void setSigningKeyCheckResult(final Boolean validSigningKey) {
-        mSigningKeyCheckBox.setEnabled(true);
-        if (validSigningKey == true) {
-            mSigningKeyCheckBox.setChecked(true);
+        setCheckResult(validSigningKey, mSigningKeyCheckBox);
+    }
+
+    private void setCheckResult(final Boolean enabled, final CheckBox checkBox) {
+        checkBox.setEnabled(true);
+        if (enabled) {
+            checkBox.setChecked(true);
         } else {
-            mSigningKeyCheckBox.setChecked(false);
+            checkBox.setChecked(false);
         }
     }
 
