@@ -18,30 +18,49 @@ import net.maelbrancke.android.tamperdetection.util.RootDetectionUtils;
  */
 public class RootCheckFragment extends Fragment {
 
-    private CheckBox mRootedBaseCheckBox;
-    private CheckBox mRootedExtendedCheckBox;
-    private RootedBaseDetector mRootedBaseDetector;
+    private CheckBox mRootedCheckBox;
+    private CheckBox mRootedSigningKeysCheckBox;
+    private CheckBox mRootedBinariesCheckBox;
+    private CheckBox mRootedProcessCheckBox;
+    private RootedDetector mRootedDetector;
+    private RootedSigningKeysDetector mRootedSigningKeysDetector;
+    private RootedBinariesDetector mRootedBinariesDetector;
+    private RootedProcessDetector mRootedProcessDetector;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_rooted, container, false);
         Button button = (Button) view.findViewById(R.id.rooted_check);
         button.setOnClickListener(rootDetectionButtonListener);
-        mRootedBaseCheckBox = (CheckBox) view.findViewById(R.id.rooted_base_check);
-        mRootedExtendedCheckBox = (CheckBox) view.findViewById(R.id.rooted_extended_check);
+        mRootedCheckBox = (CheckBox) view.findViewById(R.id.rooted_indicator);
+        mRootedSigningKeysCheckBox = (CheckBox) view.findViewById(R.id.rooted_signing_keys);
+        mRootedBinariesCheckBox = (CheckBox) view.findViewById(R.id.rooted_binaries);
+        mRootedProcessCheckBox = (CheckBox) view.findViewById(R.id.rooted_process);
         return view;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mRootedBaseDetector != null) {
-            mRootedBaseDetector.setCallbackFragment(null);
+        if (mRootedDetector != null) {
+            mRootedDetector.setCallbackFragment(null);
         }
     }
 
-    private void setBaseRootedCheckResult(final Boolean rooted) {
-        setCheckResult(rooted, mRootedBaseCheckBox);
+    private void setRootedCheckResult(final Boolean rooted) {
+        setCheckResult(rooted, mRootedCheckBox);
+    }
+
+    private void setRootedBinariesCheckResult(final Boolean rooted) {
+        setCheckResult(rooted, mRootedBinariesCheckBox);
+    }
+
+    private void setRootedSigningKeysCheckResult(final Boolean rooted) {
+        setCheckResult(rooted, mRootedSigningKeysCheckBox);
+    }
+
+    private void setRootedProcessCheckResult(final Boolean rooted) {
+        setCheckResult(rooted, mRootedProcessCheckBox);
     }
 
     private void setCheckResult(final Boolean enabled, final CheckBox checkBox) {
@@ -54,8 +73,14 @@ public class RootCheckFragment extends Fragment {
     }
 
     private void doRootDetection() {
-        mRootedBaseDetector = new RootedBaseDetector(RootCheckFragment.this);
-        mRootedBaseDetector.execute();
+        mRootedDetector = new RootedDetector(RootCheckFragment.this);
+        mRootedDetector.execute();
+        mRootedSigningKeysDetector = new RootedSigningKeysDetector(RootCheckFragment.this);
+        mRootedSigningKeysDetector.execute();
+        mRootedBinariesDetector = new RootedBinariesDetector(RootCheckFragment.this);
+        mRootedBinariesDetector.execute();
+        mRootedProcessDetector = new RootedProcessDetector(RootCheckFragment.this);
+        mRootedProcessDetector.execute();
     }
 
     View.OnClickListener rootDetectionButtonListener = new View.OnClickListener() {
@@ -65,22 +90,82 @@ public class RootCheckFragment extends Fragment {
         }
     };
 
-    static class RootedBaseDetector extends RootDetector {
+    static class RootedDetector extends RootDetector {
 
-        public RootedBaseDetector(RootCheckFragment fragment) {
+        public RootedDetector(RootCheckFragment fragment) {
             super(fragment);
         }
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            boolean rooted = RootDetectionUtils.isRooted();
+            boolean rooted = RootDetectionUtils.isRooted(true);
             return rooted;
         }
 
         @Override
         protected void onPostExecute(Boolean result) {
             if (getCallbackFragment() != null) {
-                mCallbackFragment.setBaseRootedCheckResult(result);
+                mCallbackFragment.setRootedCheckResult(result);
+            }
+        }
+    }
+
+    static class RootedSigningKeysDetector extends RootDetector {
+
+        public RootedSigningKeysDetector(RootCheckFragment fragment) {
+            super(fragment);
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            boolean rooted = RootDetectionUtils.isRootedSigningKeys();
+            return rooted;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            if (getCallbackFragment() != null) {
+                mCallbackFragment.setRootedSigningKeysCheckResult(result);
+            }
+        }
+    }
+
+    static class RootedBinariesDetector extends RootDetector {
+
+        public RootedBinariesDetector(RootCheckFragment fragment) {
+            super(fragment);
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            boolean rooted = RootDetectionUtils.isRootedBinariesPresent();
+            return rooted;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            if (getCallbackFragment() != null) {
+                mCallbackFragment.setRootedBinariesCheckResult(result);
+            }
+        }
+    }
+
+    static class RootedProcessDetector extends RootDetector {
+
+        public RootedProcessDetector(RootCheckFragment fragment) {
+            super(fragment);
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            boolean rooted = RootDetectionUtils.isRootedRunCommand();
+            return rooted;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            if (getCallbackFragment() != null) {
+                mCallbackFragment.setRootedProcessCheckResult(result);
             }
         }
     }
